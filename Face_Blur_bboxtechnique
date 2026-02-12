@@ -1,0 +1,38 @@
+%Face blur project using computer vision toolkit
+clc;
+clear;
+close all;
+
+%Select Image 
+%[file,path]=uigetfile({'*.jpg,*.png,*.jpeg'});
+img = imread("happy.jpg");
+
+figure;
+imshow(img);
+title('Original Image');
+
+%face detecting code using library
+faceDetector = vision.CascadeObjectDetector();
+bbox=step(faceDetector,img);
+
+%Blur Faces 
+blurredImg = img;
+
+for i = 1:size(bbox,1)
+    x = bbox(i,1);
+    y = bbox(i,2);
+    w = bbox(i,3);
+    h = bbox(i,4);
+
+    faceRegion = blurredImg(y:y+h, x:x+w, :);
+    faceRegion = imgaussfilt(faceRegion, 40); % blur strength
+    blurredImg(y:y+h, x:x+w, :) = faceRegion;
+end
+
+%output image 
+figure;
+imshow(blurredImg);
+title('Blurred Face');
+
+%for saving image 
+imwrite(blurredImg,'blurred_output.jpg')
